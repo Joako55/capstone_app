@@ -1,5 +1,4 @@
-#################################################Data Manipulation#########################################################
-
+#################################################Data Manipulation#######################################################
 #Load required librarys.
 library(purrr)
 library(dplyr)
@@ -55,9 +54,9 @@ header <- dashboardHeader(
 
 body <- dashboardBody(
   fluidRow(
-    column(width = 9,box(width = NULL, solidHeader = TRUE,leafletOutput("SFmap", height = 500))),
+    column(width = 9,box(width = NULL, solidHeader = TRUE,leafletOutput("SFmap", height = 500),collapsible = T)),
     #Tablero Lateral Superior#
-    column(width = 3,box(width = NULL, status = "primary",
+    column(width = 3,box(width = NULL, status = "primary",collapsible = T,
                          selectInput(inputId = "Year",
                                      label = "Seleccione el ano",
                                      choices = c(2015,2016),
@@ -70,7 +69,7 @@ body <- dashboardBody(
                          )
     ),
     box(width = NULL ,status = "warning", collapsible = T,
-        checkboxGroupInput("Super", "Ver Puntos de Retiro",choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
+        checkboxGroupInput("Super", "Ver Puntos de Retiro",choices = list("Mostrar Locales" = 1),
                            selected = 1)
     )
     )
@@ -100,7 +99,7 @@ shinyApp(
       
       
       # Show only selected years
-      UbicPedidos <- filter(UbicPedidos, ano %in% as.numeric(input$Year) & mes %in% as.numeric(input$Mes))
+      UbicPedidos <- filter(UbicPedidos, ano %in% c(as.numeric(input$Year)) & mes %in% c(as.numeric(input$Mes)))
       Puntos <- filter(Puntos, Visible %in% as.numeric(input$Super))
       
       
@@ -120,7 +119,7 @@ shinyApp(
                                                direction = 'auto')) %>% 
         #Overlay Groups (multiple at time)
         addAwesomeMarkers(lng=~(Puntos$Longitude), lat=~(Puntos$Latitude) ,icon=PP , popup = ~(Puntos$Direccion)) %>%
-        addPolygons(data=Comunas, color = "#444444", weight = 1, smoothFactor = 0.5,
+        addPolygons(data=Comunas, color = "#3f3f3f", weight = 1, smoothFactor = 0.7,
                     opacity = 1.0, fillOpacity = 0.5,
                     highlightOptions = highlightOptions(color = "Blue", weight = 2,
                                                         bringToFront = TRUE))
