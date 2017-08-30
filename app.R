@@ -31,8 +31,8 @@ Puntos<-mutate(Supers,Visible = 1)
 #Loads the coordenates file from clientes, Select fullcoord.xlsx .
 fullcoord <- read_excel("data/fullcoord.xlsx", 
                         sheet = "fullcoord", col_types = c("blank", 
-                                                           "numeric", "numeric", "text", 
-                                                           "text", "blank", "blank", "numeric", 
+                                                           "numeric", "numeric", "numeric", 
+                                                           "text", "blank", "blank", "date", 
                                                            "date", "blank", "blank", "text", 
                                                            "text", "text", "blank", "numeric", 
                                                            "numeric", "numeric", "numeric", 
@@ -57,16 +57,17 @@ body <- dashboardBody(
     column(width = 9,box(width = NULL, solidHeader = TRUE,leafletOutput("SFmap", height = 500),collapsible = T)),
     #Tablero Lateral Superior#
     column(width = 3,box(width = NULL, status = "primary",collapsible = T,
-                         selectInput(inputId = "Year",
-                                     label = "Seleccione el ano",
-                                     choices = c(2015,2016),
-                                     selected = c(2015,2016)
-                         ),
-                         selectInput(inputId = "Mes",
-                                     label = "Seleccione el Mes",
-                                     choices = c(1,2,3,4,5,6,7,8,9,10,11,12),
-                                     selected = c(1,2,3,4,5,6,7,8,9,10,11,12)
-                         )
+                         sliderInput("Year", "ano:",
+                                     min = as.numeric(min(fullcoord$ano, na.rm=TRUE)), max = as.numeric(max(fullcoord$ano, na.rm = TRUE)+1), value = c(as.numeric(min(fullcoord$ano, na.rm=TRUE)),as.numeric(max(fullcoord$ano, na.rm=TRUE)))),
+                         sliderInput("mes", "mes:",
+                                     min = 1, max = 12, value = c(1,12)),
+                         sliderInput("dia", "dia:",
+                                     min = 1, max = 31, value = c(1,31))
+                        # selectInput(inputId = "Mes",
+                        #           label = "Seleccione el Mes",
+                        #             choices = c(1,2,3,4,5,6,7,8,9,10,11,12),
+                        #             selected = c(1,2,3,4,5,6,7,8,9,10,11,12)
+                        # )
     ),
     box(width = NULL ,status = "warning", collapsible = T,
         checkboxGroupInput("Super", "Ver Puntos de Retiro",choices = list("Mostrar Locales" = 1),
@@ -94,12 +95,12 @@ shinyApp(
     output$SFmap <- renderLeaflet({
       UbicPedidos <- fullcoord
       
-      if (length(UbicPedidos) == 0)
+      if (length(UbicPedidos) == 0 || (max(fullcoord$ano)+1 == input$Year[1] & max(fullcoord$ano)+1 == input$Year[2]))
         return(NULL)
       
       
       # Show only selected years
-      UbicPedidos <- filter(UbicPedidos, ano %in% c(as.numeric(input$Year)) & mes %in% c(as.numeric(input$Mes)))
+      UbicPedidos <- filter(UbicPedidos, ano  >= input$Year[1],ano <= input$Year[2], mes <= input$mes[2], mes >= input$mes[1], dia <= input$dia[2], dia >= input$dia[1])
       Puntos <- filter(Puntos, Visible %in% as.numeric(input$Super))
       
       
