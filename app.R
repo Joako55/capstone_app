@@ -21,6 +21,12 @@ PP <- awesomeIcons(
   library = 'ion',
   markerColor = 'red')
 
+ST<-awesomeIcons(
+  icon = 'ion-star',
+  iconColor = 'white',
+  library = 'ion',
+  markerColor = "green")
+
 #Loads the shp file of the provinces of RM, Chile; Select cl_13comunas_geo.shp from comunas13.
 Comunas <- readOGR("comunas13/cl_13comunas_geo.shp",
                    layer = "cl_13comunas_geo", GDAL1_integer64_policy = TRUE)
@@ -236,12 +242,13 @@ shinyApp(
           addMarkers(lng= ~(UbicPedidos$Longitude),
                      lat = ~(UbicPedidos$Latitude),
                      clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = F),
-                     popup = ~(UbicPedidos$Direccion),
+                     popup = paste("Despachado el",UbicPedidos$FechaDespacho,", En Ventana",UbicPedidos$Ventana,", Por un monto de",UbicPedidos$`Venta Neta`,sep = " "),
                      label = ~(UbicPedidos$Direccion),
                      labelOptions = labelOptions(noHide = F,
                                                  direction = 'auto')) %>% 
           #Overlay Groups (multiple at time)
           addAwesomeMarkers(lng=~(Puntos$Longitude), lat=~(Puntos$Latitude) ,icon=PP , popup = ~(Puntos$Direccion)) %>%
+          addAwesomeMarkers(lng= -70.64689, lat= -33.45098 ,icon=ST , popup = "Strip Center") %>%
           addPolygons(data=Comunas, color = "#3f3f3f", weight = 1, smoothFactor = 0.7,
                       opacity = 1.0, fillOpacity = 0.5,
                       highlightOptions = highlightOptions(color = "Blue", weight = 2,
