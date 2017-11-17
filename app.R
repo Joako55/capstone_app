@@ -235,7 +235,7 @@ shinyApp(
         leaflet(fullcoord) %>%
           #basic map
           addTiles() %>%
-          setView(-70.6464,-33.4366, zoom = 10) %>% 
+          setView(-70.6464,-33.4366, zoom = 13) %>% 
           addLegend("bottomright", colors = "#03F", labels = "Comunas") %>%
           
           #Total
